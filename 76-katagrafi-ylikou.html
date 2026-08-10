@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>76 — Καταγραφή Υλικού</title>
 <style>
 :root{
@@ -78,6 +81,11 @@ table.items tr:hover td{background:#fbfdff}
 .iname{font-weight:600}
 .ibox{display:inline-block;font-size:11px;color:#7a5b00;background:#fff6c9;border:1px solid #f0e08a;border-radius:6px;padding:1px 6px;margin-left:6px}
 .outchip{display:inline-block;font-size:11px;color:#8a1f1f;background:#fdecec;border:1px solid #f2b8b8;border-radius:6px;padding:1px 6px;margin-left:6px}
+.archchip{display:inline-block;font-size:11px;color:#555;background:#eceff3;border:1px solid #d9e2ec;border-radius:6px;padding:1px 6px;margin-left:6px}
+.flchip{display:inline-block;font-size:10px;border:1px solid var(--line);border-radius:6px;padding:0 5px;margin-left:5px;font-weight:700;background:#fff}
+.flchip.cond{background:#eef4fb;border-color:#cfe0f3;color:#185FA5}
+tr.arch td,.card.arch,.recitem.arch,.uitem.arch{opacity:.5}
+#btnArch.on{background:var(--blue);color:#fff;border-color:var(--blue)}
 .inote{color:var(--muted);font-size:12px;margin-top:2px}
 .qtybox{display:flex;align-items:center;gap:3px}
 .qtybox input{width:60px;padding:5px 6px;border:1px solid var(--line);border-radius:7px;text-align:center}
@@ -238,6 +246,10 @@ table.items tr:hover td{background:#fbfdff}
 .empty{text-align:center;color:var(--muted);padding:40px 10px}
 .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:10px;box-shadow:var(--shadow);z-index:80;opacity:0;transition:opacity .2s;font-size:14px;pointer-events:none}
 .toast.on{opacity:1}
+.logrow{padding:6px 2px;border-bottom:1px solid #eef2f6;font-size:13px;line-height:1.4}
+.logrow:last-child{border-bottom:none}
+.logt{color:var(--muted);font-size:11px}
+.logact{background:var(--chip);border:1px solid var(--line);border-radius:6px;padding:0 6px;font-size:11px;font-weight:700;color:var(--blue-d)}
 .gate{position:fixed;inset:0;background:linear-gradient(135deg,var(--blue),var(--blue-d));display:flex;align-items:center;justify-content:center;z-index:200;padding:20px}
 .gate.off{display:none}
 .gatebox{background:#fff;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,.3);padding:26px 24px;max-width:340px;width:100%;text-align:center}
@@ -266,7 +278,7 @@ table.items tr:hover td{background:#fbfdff}
     <div class="badge"><img id="logo" alt="76"></div>
     <div class="htext"><h1>Καταγραφή Υλικού</h1><p>76ο Σύστημα Προσκόπων Στροβόλου · <span class="savechip" id="savechip">αποθηκεύεται τοπικά</span></p></div>
     <div class="hspacer"></div>
-    <div class="hbtns"><button id="btnSettings" title="Ρυθμίσεις χρωμάτων">⚙</button><button id="btnManage">Τοποθεσίες &amp; Ετικέτες</button><button id="btnExport">Εξαγωγή</button><button id="btnImport">Εισαγωγή</button></div>
+    <div class="hbtns"><button id="btnSettings" title="Ρυθμίσεις χρωμάτων">⚙</button><button id="btnLog">📖 Ημερολόγιο</button><button id="btnManage">Τοποθεσίες &amp; Ετικέτες</button><button id="btnExport">Εξαγωγή</button><button id="btnImport">Εισαγωγή</button></div>
   </div>
   <div class="modeswitch">
     <button id="mBrowse" class="on">🔎 Προβολή</button>
@@ -279,8 +291,9 @@ table.items tr:hover td{background:#fbfdff}
   <div><b>✓ Απογραφή</b> — δηλώνεις ότι το είδες/επιβεβαίωσες σήμερα· η κουκκίδα γίνεται μπλε. <b>Πάτα ξανά για αναίρεση.</b></div>
   <div><b>− / + και το πεδίο ποσότητας</b> — μετράς/αλλάζεις ποσότητα (μετράει ως απογραφή).</div>
   <div><b>🤝 Δανεισμός</b> — κάποιος παίρνει/επιστρέφει υλικό (μειώνει το διαθέσιμο όσο είναι έξω).</div>
-  <div><b>✎ Επεξεργασία</b> — αλλάζεις όνομα / κατηγορίες / μονάδα / λεπτομέρειες. <b>ΔΕΝ</b> μετράει ως απογραφή.</div>
-  <div><b>🗑 Διαγραφή</b> — σβήνει το υλικό (ζητά επιβεβαίωση).</div>
+  <div><b>✎ Επεξεργασία</b> — όνομα / κατηγορίες / μονάδα / λεπτομέρειες + <b>σημάνσεις κατάστασης</b> (χρειάζεται κι άλλα, επισκευή, αντικατάσταση, άλλο) και <b>ανάλυση</b> (πόσα καλά/με φθορές). <b>ΔΕΝ</b> μετράει ως απογραφή.</div>
+  <div><b>Ποσότητα 0</b> — το υλικό <b>αρχειοθετείται</b> (δεν διαγράφεται): κρύβεται από την Προβολή αλλά μένει· εμφανίζεται με το κουμπί «Αρχείο» και επανέρχεται αν ξαναβάλεις ποσότητα.</div>
+  <div><b>🗑 Διαγραφή</b> — σβήνει οριστικά το υλικό (ζητά επιβεβαίωση). Για «τελείωσε» χρησιμοποίησε καλύτερα ποσότητα 0.</div>
   <div><b>📷 Φωτό</b> — προσθέτεις φωτογραφία στο υλικό.</div>
   <div><b>Τοποθεσία (πτυσσόμενο)</b> — μεταφέρεις το υλικό σε άλλη αποθήκη (δεν μετράει ως απογραφή).</div>
   <div><b>Χρώμα κουκκίδας</b> — πόσο πρόσφατη η τελευταία απογραφή: 🔵 πρόσφατο … 🔴 παλιό (ρυθμίζεται από το ⚙).</div>
@@ -353,6 +366,7 @@ table.items tr:hover td{background:#fbfdff}
       <button class="btn p" id="btnAdd" style="padding:8px 12px">＋ Νέο υλικό</button>
       <select id="groupBy" title="Ομαδοποίηση" style="max-width:170px"><option value="loc">Ανά τοποθεσία</option><option value="label">Ανά ετικέτα</option><option value="none">Χωρίς ομαδοποίηση</option></select>
       <span class="count" id="count" style="margin-left:auto"></span>
+      <button id="btnArch" class="btn" style="padding:8px 12px" title="Υλικά με ποσότητα 0 (δεν διαγράφονται)">Αρχείο 0</button>
     </div>
     <div class="filterlabel">Τοποθεσία</div><div class="chips" id="locFilters"></div>
     <div class="filterlabel">Ετικέτα</div><div class="chips" id="labFilters"></div>
@@ -370,6 +384,13 @@ table.items tr:hover td{background:#fbfdff}
   <div class="grid2"><div class="fld"><label>Μονάδα (ράφι/κουτί…)</label><select id="fUnit"></select></div>
     <div class="fld"><label>Λεπτομέρειες</label><input id="fNote" placeholder="π.χ. 4,5 × 5,5"></div></div>
   <div class="fld"><label>Ετικέτες</label><div class="lblpick" id="fLabels"></div></div>
+  <div class="fld"><label>Σημάνσεις κατάστασης</label><div class="lblpick" id="fFlags"></div></div>
+  <div class="fld"><label>Περιγραφή (επισκευή / άλλο)</label><input id="fFlagNote" placeholder="π.χ. σπασμένοι ορθοστάτες, θέλει ράψιμο…"></div>
+  <div class="fld"><label>Ανάλυση κατάστασης — πόσα σε τι κατάσταση (προαιρετικό)</label>
+    <div id="fConds"></div>
+    <button type="button" class="btn" id="fCondAdd" style="padding:6px 10px;margin-top:4px">＋ γραμμή κατάστασης</button>
+    <div class="hint" id="fCondGood"></div>
+  </div>
   <div class="mfoot"><button class="btn danger" id="itemDelete" style="display:none">Διαγραφή</button>
     <div class="right"><button class="btn" id="itemCancel">Άκυρο</button><button class="btn p" id="itemSave">Αποθήκευση</button></div></div>
 </div></div>
@@ -422,6 +443,14 @@ table.items tr:hover td{background:#fbfdff}
   <div class="mfoot"><button class="btn" id="setDefaults">Προεπιλογές</button><div class="right"><button class="btn" id="setCancel">Άκυρο</button><button class="btn p" id="setSave">Αποθήκευση</button></div></div>
 </div></div>
 
+<!-- logbook modal -->
+<div class="overlay" id="ovLog"><div class="modal" style="max-width:640px">
+  <h3>📖 Ημερολόγιο</h3>
+  <div class="hint" id="logWho"></div>
+  <div id="logList" style="max-height:60vh;overflow:auto;margin-top:6px"></div>
+  <div class="mfoot"><button class="btn" id="logRefresh">↻ Ανανέωση</button><div class="right"><button class="btn" id="logClose">Κλείσιμο</button></div></div>
+</div></div>
+
 <!-- io modal -->
 <div class="overlay" id="ovIO"><div class="modal"><h3 id="ioTitle">Εξαγωγή</h3><div id="ioBody"></div>
   <div class="mfoot"><div class="right"><button class="btn" id="ioClose">Κλείσιμο</button></div></div></div></div>
@@ -439,7 +468,7 @@ const GATE_CODE='476';
 (function(){ const g=document.getElementById('gate'); const gl=document.getElementById('gateLogo'); if(gl)gl.src=LOGO;
   const off=()=>g.classList.add('off');
   try{ if(localStorage.getItem('76inv:gate')===GATE_CODE) off(); }catch(e){}
-  const submit=()=>{ const v=(document.getElementById('gateInput').value||'').trim(); if(v===GATE_CODE){ try{localStorage.setItem('76inv:gate',GATE_CODE);}catch(e){} document.getElementById('gateErr').textContent=''; off(); } else { document.getElementById('gateErr').textContent='Λάθος κωδικός'; const i=document.getElementById('gateInput'); i.value=''; i.focus&&i.focus(); } };
+  const submit=()=>{ const v=(document.getElementById('gateInput').value||'').trim(); if(v===GATE_CODE){ try{localStorage.setItem('76inv:gate',GATE_CODE);}catch(e){} document.getElementById('gateErr').textContent=''; off(); try{ if(!hasWho())whoName(true); }catch(e){} } else { document.getElementById('gateErr').textContent='Λάθος κωδικός'; const i=document.getElementById('gateInput'); i.value=''; i.focus&&i.focus(); } };
   document.getElementById('gateBtn').onclick=submit;
   document.getElementById('gateInput').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); submit(); } });
   if(!g.classList.contains('off')) setTimeout(()=>{ const i=document.getElementById('gateInput'); i&&i.focus&&i.focus(); },60);
@@ -453,13 +482,22 @@ const USIZE={S:[92,60],M:[132,84],L:[184,104]};
 const KEY='76inv:v1';
 
 let state=migrate(load());
+let undoMap={}; try{ undoMap=JSON.parse(localStorage.getItem('76inv:undo'))||{}; }catch(e){ undoMap={}; }
+function saveUndo(){ try{ localStorage.setItem('76inv:undo',JSON.stringify(undoMap)); }catch(e){} }
+let showArchived=false;
+function isArchived(i){ return num(i.qty)===0; }
+/* ===== Ημερολόγιο (logbook) ===== */
+function whoName(force){ let w=''; try{ w=localStorage.getItem('76inv:who')||''; }catch(e){} if(force){ const v=(prompt('Πώς σε λένε; (για το ημερολόγιο)', w||'')||'').trim(); if(v){ w=v; try{localStorage.setItem('76inv:who',w);}catch(e){} } } return w||'Ανώνυμος'; }
+function hasWho(){ try{ return !!localStorage.getItem('76inv:who'); }catch(e){ return false; } }
+function logEvent(action,i,detail){ try{ const e={id:'l'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),ts:new Date().toISOString(),who:whoName(),action:action,item_id:(i&&i.id)||'',item_name:(i&&i.name)||'',loc:(i&&i.loc)||'',detail:detail||''}; SB.up('log',e); }catch(err){} }
+function fmtDT(iso){ try{ const d=new Date(iso); return d.getDate()+' '+MON[d.getMonth()]+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }catch(e){ return String(iso); } }
 function load(){ try{ const s=JSON.parse(localStorage.getItem(KEY)); if(s&&s.items) return s; }catch(e){}
   const locs=uniq([...DEFAULT_LOCS,...SEED.map(i=>i.loc)]); const labs=uniq([...DEFAULT_LABELS,...SEED.flatMap(i=>i.labels||[])]);
   return {items:SEED.map(i=>({...i})),locations:locs,labels:labs,groupBy:'loc',mode:'browse',rec:{loc:locs[0]||'',unit:'',labels:[]},loans:[],units:null,overView:'site'}; }
 function migrate(s){
   s.loans=s.loans||[]; s.zones=s.zones||[]; s.site=s.site||{}; s.rec=s.rec||{loc:'',unit:'',labels:[]}; s.mode=s.mode||'browse'; s.overView=s.overView||'site';
   if(s.rec.unit===undefined) s.rec.unit='';
-  s.items.forEach(i=>{ if(i.photo===undefined)i.photo=''; if(i.unit===undefined)i.unit=''; if(i.checked===undefined)i.checked='2025-03-15'; });
+  s.items.forEach(i=>{ if(i.photo===undefined)i.photo=''; if(i.unit===undefined)i.unit=''; if(i.checked===undefined)i.checked='2025-03-15'; if(i.flags===undefined)i.flags=[]; if(i.flagNote===undefined)i.flagNote=''; if(i.conditions===undefined)i.conditions=[]; });
   s.locations=uniq((s.locations||[]).map(renameLoc));
   s.items.forEach(i=>{ i.loc=renameLoc(i.loc); });
   (s.units||[]).forEach(u=>u.loc=renameLoc(u.loc));
@@ -614,12 +652,12 @@ function renderRec(){ buildRecBar(); const loc=state.rec.loc; const arr=state.it
   if(!arr.length){ list.innerHTML='<div class="recempty">Δεν έχει καταγραφεί τίποτα εδώ ακόμη.<br>Γράψε το πρώτο υλικό πιο πάνω και πάτα ＋.</div>'; return; }
   list.innerHTML=''; arr.forEach(i=>list.appendChild(recRow(i)));
 }
-function recRow(i){ const el=document.createElement('div'); el.className='recitem'; const _fc=freshColor(i); if(_fc)el.style.borderLeft='6px solid '+_fc;
+function recRow(i){ const el=document.createElement('div'); el.className='recitem'+(isArchived(i)?' arch':''); const _fc=freshColor(i); if(_fc)el.style.borderLeft='6px solid '+_fc;
   const photo=i.photo?'<img src="'+i.photo+'" data-act="viewphoto" data-id="'+i.id+'" alt="">':'<span data-act="addphoto" data-id="'+i.id+'" title="Φωτό" style="cursor:pointer">📷</span>';
   const labs=(i.labels||[]).map(l=>'<span class="lchip">'+esc(l)+'</span>').join('');
   const bl=boxLabel(i); const out=itemOut(i.id);
   el.innerHTML='<div class="ri-photo">'+photo+'</div>'+
-    '<div class="ri-main"><div class="ri-name">'+freshDot(i)+esc(i.name)+(bl?'<span class="ibox">'+esc(bl)+'</span>':'')+(out>0?'<span class="outchip">'+out+' έξω</span>':'')+'</div>'+
+    '<div class="ri-main"><div class="ri-name">'+freshDot(i)+esc(i.name)+(bl?'<span class="ibox">'+esc(bl)+'</span>':'')+(out>0?'<span class="outchip">'+out+' έξω</span>':'')+(isArchived(i)?'<span class="archchip">αρχειοθετημένο</span>':'')+flagBadges(i)+'</div>'+
       '<div class="freshdate">'+freshDateStr(i)+'</div>'+(i.note?'<div class="inote">'+esc(i.note)+'</div>':'')+(labs?'<div class="ri-labels">'+labs+'</div>':'')+'</div>'+
     '<div class="ri-qty"><button class="bigstep" data-act="dec" data-id="'+i.id+'">−</button><input data-act="qty" data-ev="change" data-id="'+i.id+'" value="'+esc(i.qty)+'" inputmode="numeric"><button class="bigstep" data-act="inc" data-id="'+i.id+'">＋</button></div>'+
     '<div class="ri-act"><button class="ok" data-act="confirm" data-id="'+i.id+'" title="Είδα/Επιβεβαίωση">✓</button><button class="loan" data-act="loan" data-id="'+i.id+'" title="Δανεισμός">🤝</button><button data-act="edit" data-id="'+i.id+'">✎</button><button class="del" data-act="del" data-id="'+i.id+'">🗑</button></div>';
@@ -636,7 +674,7 @@ document.getElementById('recPhotoInput').onchange=async e=>{ const f=e.target.fi
 function recAdd(){ const nameEl=document.getElementById('recName'); const name=nameEl.value.trim(); if(!name){ nameEl.focus(); return; }
   const qty=document.getElementById('recQty').value.trim();
   const it={id:uid(),name,qty,loc:state.rec.loc,unit:state.rec.unit||'',box:unitName(state.rec.unit)||'',note:'',labels:[...(state.rec.labels||[])],photo:pendingPhoto||'',checked:todayISO()};
-  state.items.unshift(it); SB.item(it); save(); nameEl.value=''; document.getElementById('recQty').value='1'; pendingPhoto=null; document.getElementById('recPhotoBtn').innerHTML='📷'; renderRec(); nameEl.focus(); toast('✓ '+name); }
+  state.items.unshift(it); SB.item(it); logEvent('προσθήκη',it); save(); nameEl.value=''; document.getElementById('recQty').value='1'; pendingPhoto=null; document.getElementById('recPhotoBtn').innerHTML='📷'; renderRec(); nameEl.focus(); toast('✓ '+name); }
 document.getElementById('recAdd').onclick=recAdd;
 document.getElementById('recName').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); recAdd(); } });
 document.getElementById('recQty').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); recAdd(); } });
@@ -653,12 +691,12 @@ function handleAct(e){ const el=e.currentTarget; const id=el.dataset.id; const a
   if(act==='addphoto'){ const inp=document.getElementById('recPhotoInput'); inp.setAttribute('data-target',id); inp.click(); return; }
   if(act==='loan'){ openLoan(id); return; }
   if(!i&&act!=='edit')return;
-  if(act==='inc'||act==='dec'){ let n=num(i.qty); if(n==null)n=0; n+=act==='inc'?1:-1; if(n<0)n=0; i.qty=String(n); i.checked=todayISO(); SB.step(i,act==='inc'?1:-1); save(); rerender(); }
-  else if(act==='qty'){ i.qty=el.value.trim(); i.checked=todayISO(); SB.item(i); save(); rerender(); toast('Ποσότητα: '+i.qty); }
-  else if(act==='loc'){ i.loc=el.value; i.unit=''; SB.item(i); save(); rerender(); toast('Μεταφέρθηκε → '+i.loc); }
-  else if(act==='confirm'){ if(i._undo!==undefined){ i.checked=i._undo; i._undo=undefined; SB.item(i); save(); rerender(); toast('↩︎ Αναιρέθηκε — '+i.name); } else { i._undo=(i.checked||''); i.checked=todayISO(); SB.item(i); save(); rerender(); toast('✓ Απογραφή — '+i.name+' (πάτα ξανά για αναίρεση)'); } }
+  if(act==='inc'||act==='dec'){ const _o=i.qty; let n=num(i.qty); if(n==null)n=0; n+=act==='inc'?1:-1; if(n<0)n=0; i.qty=String(n); i.checked=todayISO(); SB.step(i,act==='inc'?1:-1); logEvent('ποσότητα',i,_o+'→'+i.qty+(num(i.qty)===0?' · αρχειοθετήθηκε':(num(_o)===0?' · επαναφορά':''))); save(); rerender(); }
+  else if(act==='qty'){ const _o=i.qty; i.qty=el.value.trim(); i.checked=todayISO(); SB.item(i); logEvent('ποσότητα',i,_o+'→'+i.qty+(num(i.qty)===0?' · αρχειοθετήθηκε':(num(_o)===0?' · επαναφορά':''))); save(); rerender(); toast('Ποσότητα: '+i.qty); }
+  else if(act==='loc'){ i.loc=el.value; i.unit=''; SB.item(i); logEvent('μετακίνηση',i,'προς '+i.loc); save(); rerender(); toast('Μεταφέρθηκε → '+i.loc); }
+  else if(act==='confirm'){ const t=todayISO(); if(i.checked===t && undoMap[id]!==undefined){ i.checked=undoMap[id]; delete undoMap[id]; saveUndo(); SB.item(i); logEvent('αναίρεση απογραφής',i); save(); rerender(); toast('↩︎ Αναιρέθηκε — '+i.name); } else { undoMap[id]=(i.checked||''); saveUndo(); i.checked=t; SB.item(i); logEvent('απογραφή',i); save(); rerender(); toast('✓ Απογραφή — '+i.name+' (ξανά για αναίρεση)'); } }
   else if(act==='edit'){ openItem(id); }
-  else if(act==='del'){ if(confirm('Οριστική διαγραφή «'+i.name+'»;\nΔεν αναιρείται.')){ state.items=state.items.filter(x=>x.id!==id); SB.delItem(id); save(); rerender(); toast('Διαγράφηκε'); } }
+  else if(act==='del'){ if(confirm('Οριστική διαγραφή «'+i.name+'»;\nΔεν αναιρείται.')){ logEvent('διαγραφή',i); state.items=state.items.filter(x=>x.id!==id); SB.delItem(id); save(); rerender(); toast('Διαγράφηκε'); } }
 }
 function rerender(){ if(state.mode==='rec')renderRec(); else if(state.mode==='loans')renderLoans(); else if(state.mode==='over')renderOver(); else renderBrowse(); refreshBadges(); }
 
@@ -691,7 +729,7 @@ function loanRow(l,open){ const st=loanStatus(l); const el=document.createElemen
   el.querySelectorAll('[data-lact]').forEach(b=>b.onclick=loanAct); return el;
 }
 function loanAct(e){ const id=e.currentTarget.dataset.id, act=e.currentTarget.dataset.lact; const l=state.loans.find(x=>x.id===id); if(!l)return;
-  if(act==='ret'){ l.returned=l.qty; l.back=todayISO(); SB.loan(l); save(); renderLoans(); toast('Επεστράφη πλήρως'); }
+  if(act==='ret'){ l.returned=l.qty; l.back=todayISO(); SB.loan(l); logEvent('επιστροφή δανεισμού',{id:l.itemId,name:l.itemName,loc:l.loc},l.who); save(); renderLoans(); toast('Επεστράφη πλήρως'); }
   else if(act==='partial'){ const rem=openOf(l); const v=prompt('Πόσα επιστράφηκαν; (έξω: '+rem+')',String(rem)); const n=num(v); if(n==null)return; const ret=(num(l.returned)||0)+Math.min(n,rem); l.returned=String(ret); if(openOf(l)<=0)l.back=todayISO(); SB.loan(l); save(); renderLoans(); toast('Καταχωρήθηκε επιστροφή'); }
   else if(act==='del'){ if(confirm('Διαγραφή εγγραφής δανεισμού;')){ state.loans=state.loans.filter(x=>x.id!==id); SB.delLoan(id); save(); renderLoans(); } }
 }
@@ -710,7 +748,7 @@ document.getElementById('loanSave').onclick=()=>{ const i=state.items.find(x=>x.
   const who=document.getElementById('lWho').value.trim(); if(!who){ toast('Ποιος δανείζεται;'); return; }
   let qty=num(document.getElementById('lQty').value)||1; if(qty<1)qty=1;
   const L={id:uid(),itemId:i.id,itemName:i.name,loc:i.loc,who,qty:String(qty),returned:'0',out:document.getElementById('lOut').value||todayISO(),due:document.getElementById('lDue').value||'',back:'',note:document.getElementById('lNote').value.trim()};
-  state.loans.unshift(L); SB.loan(L); save(); hide('ovLoan'); toast('🤝 Δανείστηκε → '+who); if(state.mode==='loans')renderLoans(); else rerender(); }
+  state.loans.unshift(L); SB.loan(L); logEvent('δανεισμός',i,who+' ×'+qty); save(); hide('ovLoan'); toast('🤝 Δανείστηκε → '+who); if(state.mode==='loans')renderLoans(); else rerender(); }
 document.getElementById('btnNewLoan').onclick=()=>openLoan(state.items[0]?state.items[0].id:null);
 
 /* ===== OVERVIEW ===== */
@@ -858,7 +896,7 @@ document.getElementById('unitDelete').onclick=()=>{ if(unitEditId&&confirm('Δι
 /* ===== BROWSE ===== */
 let fLocSel=new Set(),fLabSel=new Set(),query='';
 function counts(field){ const m={}; state.items.forEach(i=>{ const vals=field==='labels'?(i.labels||[]):[i[field]]; vals.forEach(v=>{ if(v)m[v]=(m[v]||0)+1; }); }); return m; }
-function matches(i){ if(fLocSel.size&&!fLocSel.has(i.loc))return false;
+function matches(i){ if(!showArchived && isArchived(i))return false; if(fLocSel.size&&!fLocSel.has(i.loc))return false;
   if(fLabSel.size){ const ls=new Set(i.labels||[]); let ok=false; fLabSel.forEach(l=>{ if(ls.has(l))ok=true; }); if(!ok)return false; }
   if(query){ const t=(i.name+' '+(i.note||'')+' '+boxLabel(i)+' '+(i.loc||'')+' '+(i.labels||[]).join(' ')).toLowerCase(); if(!t.includes(query))return false; } return true; }
 function renderFilters(){ const lc=counts('loc'),bc=counts('labels');
@@ -866,7 +904,7 @@ function renderFilters(){ const lc=counts('loc'),bc=counts('labels');
   state.locations.forEach(loc=>{ const c=document.createElement('button'); c.className='chip loc'+(fLocSel.has(loc)?' sel':''); c.innerHTML=esc(loc)+' <span class="n">'+(lc[loc]||0)+'</span>'; c.onclick=()=>{ fLocSel.has(loc)?fLocSel.delete(loc):fLocSel.add(loc); renderBrowse(); }; lf.appendChild(c); });
   const bf=document.getElementById('labFilters'); bf.innerHTML='';
   state.labels.forEach(lab=>{ const c=document.createElement('button'); c.className='chip lab'+(fLabSel.has(lab)?' sel':''); c.innerHTML=esc(lab)+' <span class="n">'+(bc[lab]||0)+'</span>'; c.onclick=()=>{ fLabSel.has(lab)?fLabSel.delete(lab):fLabSel.add(lab); renderBrowse(); }; bf.appendChild(c); }); }
-function renderBrowse(){ renderFilters(); renderLegend(); const items=state.items.filter(matches);
+function renderBrowse(){ renderFilters(); renderLegend(); const archN=state.items.filter(isArchived).length; const ab=document.getElementById('btnArch'); if(ab){ ab.textContent=(showArchived?'Κρύψε αρχείο ':'Αρχείο ')+archN; ab.classList.toggle('on',showArchived); } const items=state.items.filter(matches);
   document.getElementById('count').textContent=items.length+' / '+state.items.length+' υλικά';
   const gb=state.groupBy,list=document.getElementById('list'); list.innerHTML='';
   if(!items.length){ list.innerHTML='<div class="empty">Κανένα υλικό με αυτά τα φίλτρα.</div>'; return; }
@@ -881,11 +919,19 @@ function groupEl(title,arr){ const wrap=document.createElement('div'); wrap.clas
   table.innerHTML='<thead><tr><th style="width:34%">Υλικό</th><th>Ποσότητα</th><th>Τοποθεσία</th><th>Ετικέτες</th><th></th></tr></thead><tbody>'+arr.map(rowHTML).join('')+'</tbody>';
   wrap.appendChild(table); const cards=document.createElement('div'); cards.className='cards'; cards.innerHTML=arr.map(cardHTML).join(''); wrap.appendChild(cards);
   wrap.querySelectorAll('[data-act]').forEach(el=>el.addEventListener(el.dataset.ev||'click',handleAct)); return wrap; }
-function rowHTML(i){ const bl=boxLabel(i),out=itemOut(i.id); return '<tr><td><span class="iname">'+freshDot(i)+esc(i.name)+'</span>'+(bl?'<span class="ibox">'+esc(bl)+'</span>':'')+(out>0?'<span class="outchip">'+out+' έξω</span>':'')+(i.note?'<div class="inote">'+esc(i.note)+'</div>':'')+'<div class="freshdate">'+freshDateStr(i)+'</div></td><td>'+qtyHTML(i)+'</td><td>'+locHTML(i)+'</td><td>'+labHTML(i)+'</td><td><div class="rowact"><button class="ok" data-act="confirm" data-id="'+i.id+'" title="Είδα/Επιβεβαίωση">✓</button><button class="loan" data-act="loan" data-id="'+i.id+'">🤝</button><button data-act="edit" data-id="'+i.id+'">✎</button><button class="del" data-act="del" data-id="'+i.id+'">🗑</button></div></td></tr>'; }
-function cardHTML(i){ const bl=boxLabel(i),out=itemOut(i.id); return '<div class="card"><div class="top"><div><span class="iname">'+freshDot(i)+esc(i.name)+'</span>'+(bl?'<span class="ibox">'+esc(bl)+'</span>':'')+(out>0?'<span class="outchip">'+out+' έξω</span>':'')+(i.note?'<div class="inote">'+esc(i.note)+'</div>':'')+'<div class="freshdate">'+freshDateStr(i)+'</div></div>'+qtyHTML(i)+'</div><div class="meta">'+locHTML(i)+labHTML(i)+'<div class="rowact" style="margin-left:auto"><button class="ok" data-act="confirm" data-id="'+i.id+'">✓</button><button class="loan" data-act="loan" data-id="'+i.id+'">🤝</button><button data-act="edit" data-id="'+i.id+'">✎</button><button class="del" data-act="del" data-id="'+i.id+'">🗑</button></div></div></div>'; }
+function rowHTML(i){ const bl=boxLabel(i),out=itemOut(i.id); return '<tr'+(isArchived(i)?' class="arch"':'')+'><td><span class="iname">'+freshDot(i)+esc(i.name)+'</span>'+(bl?'<span class="ibox">'+esc(bl)+'</span>':'')+(out>0?'<span class="outchip">'+out+' έξω</span>':'')+(isArchived(i)?'<span class="archchip">αρχειοθετημένο</span>':'')+flagBadges(i)+(i.note?'<div class="inote">'+esc(i.note)+'</div>':'')+'<div class="freshdate">'+freshDateStr(i)+'</div></td><td>'+qtyHTML(i)+'</td><td>'+locHTML(i)+'</td><td>'+labHTML(i)+'</td><td><div class="rowact"><button class="ok" data-act="confirm" data-id="'+i.id+'" title="Είδα/Επιβεβαίωση">✓</button><button class="loan" data-act="loan" data-id="'+i.id+'">🤝</button><button data-act="edit" data-id="'+i.id+'">✎</button><button class="del" data-act="del" data-id="'+i.id+'">🗑</button></div></td></tr>'; }
+function cardHTML(i){ const bl=boxLabel(i),out=itemOut(i.id); return '<div class="card'+(isArchived(i)?' arch':'')+'"><div class="top"><div><span class="iname">'+freshDot(i)+esc(i.name)+'</span>'+(bl?'<span class="ibox">'+esc(bl)+'</span>':'')+(out>0?'<span class="outchip">'+out+' έξω</span>':'')+(isArchived(i)?'<span class="archchip">αρχειοθετημένο</span>':'')+flagBadges(i)+(i.note?'<div class="inote">'+esc(i.note)+'</div>':'')+'<div class="freshdate">'+freshDateStr(i)+'</div></div>'+qtyHTML(i)+'</div><div class="meta">'+locHTML(i)+labHTML(i)+'<div class="rowact" style="margin-left:auto"><button class="ok" data-act="confirm" data-id="'+i.id+'">✓</button><button class="loan" data-act="loan" data-id="'+i.id+'">🤝</button><button data-act="edit" data-id="'+i.id+'">✎</button><button class="del" data-act="del" data-id="'+i.id+'">🗑</button></div></div></div>'; }
 function qtyHTML(i){ return '<div class="qtybox"><button class="qstep" data-act="dec" data-id="'+i.id+'">−</button><input data-act="qty" data-ev="change" data-id="'+i.id+'" value="'+esc(i.qty)+'"><button class="qstep" data-act="inc" data-id="'+i.id+'">+</button></div>'; }
 function locHTML(i){ const opts=state.locations.map(l=>'<option'+(l===i.loc?' selected':'')+'>'+esc(l)+'</option>').join(''); const extra=state.locations.includes(i.loc)?'':'<option selected>'+esc(i.loc)+'</option>'; return '<select class="locsel" data-act="loc" data-ev="change" data-id="'+i.id+'">'+extra+opts+'</select>'; }
 function labHTML(i){ const chips=(i.labels||[]).map(l=>'<span class="lchip">'+esc(l)+'</span>').join(''); return '<div class="lchips">'+chips+'<span class="lchip add" data-act="edit" data-id="'+i.id+'">＋ ετικέτα</span></div>'; }
+const FLAGS=[{k:'need',t:'χρειάζεται κι άλλα',s:'＋ κι άλλα',c:'#185FA5'},{k:'repair',t:'θέλει επισκευή',s:'🔧 επισκευή',c:'#c77700'},{k:'replace',t:'θέλει αντικατάσταση',s:'↺ αντικατ.',c:'#a32d2d'},{k:'other',t:'άλλο',s:'• άλλο',c:'#5F5E5A'}];
+function flagBadges(i){ let s=''; (i.flags||[]).forEach(k=>{ const f=FLAGS.find(x=>x.k===k); if(f)s+='<span class="flchip" style="border-color:'+f.c+'66;color:'+f.c+'">'+f.s+'</span>'; }); if((i.conditions||[]).length)s+='<span class="flchip cond" title="'+esc((i.conditions||[]).map(x=>x.t+':'+x.q).join(', '))+'">⚙ κατάσταση</span>'; return s; }
+function condRow(t,q){ return '<div class="mgrow condrow"><input class="cond-t" value="'+esc(t||'')+'" placeholder="κατάσταση (π.χ. μικροφθορές)"><input class="cond-q" style="max-width:76px;text-align:center" inputmode="numeric" value="'+esc(q==null?'':q)+'" placeholder="πόσα"><button type="button" class="cond-x" style="border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 9px">✕</button></div>'; }
+function bindConds(){ const c=document.getElementById('fConds'); c.querySelectorAll('.cond-x').forEach(b=>b.onclick=()=>{ b.closest('.condrow').remove(); updGood(); }); c.querySelectorAll('.cond-q').forEach(inp=>inp.oninput=updGood); }
+function renderConds(list){ const c=document.getElementById('fConds'); c.innerHTML=((list&&list.length)?list:[]).map(x=>condRow(x.t,x.q)).join(''); bindConds(); updGood(); }
+function collectConds(){ const out=[]; document.querySelectorAll('#fConds .condrow').forEach(r=>{ const t=r.querySelector('.cond-t').value.trim(); const q=num(r.querySelector('.cond-q').value); if(t)out.push({t,q:(q==null?0:q)}); }); return out; }
+function updGood(){ const total=num(document.getElementById('fQty').value)||0; let bad=0; document.querySelectorAll('#fConds .cond-q').forEach(x=>{ const n=num(x.value); if(n)bad+=n; }); const g=document.getElementById('fCondGood'); if(g)g.textContent=total?('Καλά (υπόλοιπο): '+Math.max(0,total-bad)+' από '+total):''; }
+document.getElementById('fCondAdd').onclick=()=>{ document.getElementById('fConds').insertAdjacentHTML('beforeend',condRow('','')); bindConds(); updGood(); };
 
 /* item modal */
 let editingId=null;
@@ -898,15 +944,19 @@ function openItem(id){ editingId=id||null; const i=id?state.items.find(x=>x.id==
   ls.onchange=()=>fillUnitSelect(ls.value,'');
   document.getElementById('fUnit').onchange=e=>{ if(e.target.value==='__new'){ openUnit(null,ls.value,newId=>{ fillUnitSelect(ls.value,newId); }); e.target.value=i.unit||''; } };
   const sel=new Set(i.labels||[]); const lp=document.getElementById('fLabels'); lp.innerHTML=''; state.labels.forEach(l=>{ const c=document.createElement('button'); c.type='button'; c.className='chip'+(sel.has(l)?' sel':''); c.textContent=l; c.onclick=()=>c.classList.toggle('sel'); lp.appendChild(c); });
+  const fset=new Set(i.flags||[]); const fpk=document.getElementById('fFlags'); fpk.innerHTML=''; FLAGS.forEach(f=>{ const c=document.createElement('button'); c.type='button'; c.className='chip'+(fset.has(f.k)?' sel':''); c.textContent=f.t; c.dataset.k=f.k; c.onclick=()=>c.classList.toggle('sel'); fpk.appendChild(c); });
+  document.getElementById('fFlagNote').value=i.flagNote||''; renderConds(i.conditions||[]);
   document.getElementById('itemDelete').style.display=id?'inline-block':'none'; show('ovItem'); setTimeout(()=>document.getElementById('fName').focus(),50); }
 document.getElementById('itemSave').onclick=()=>{ const name=document.getElementById('fName').value.trim(); if(!name){ toast('Βάλε όνομα'); return; }
   const labels=[...document.querySelectorAll('#fLabels .chip.sel')].map(c=>c.textContent); const loc=document.getElementById('fLoc').value; let unitV=document.getElementById('fUnit').value; if(unitV==='__new')unitV='';
-  const data={name,qty:document.getElementById('fQty').value.trim(),loc,unit:unitV,box:unitName(unitV)||'',note:document.getElementById('fNote').value.trim(),labels};
+  const flags=[...document.querySelectorAll('#fFlags .chip.sel')].map(c=>c.dataset.k);
+  const data={name,qty:document.getElementById('fQty').value.trim(),loc,unit:unitV,box:unitName(unitV)||'',note:document.getElementById('fNote').value.trim(),labels,flags,flagNote:document.getElementById('fFlagNote').value.trim(),conditions:collectConds()};
   let saved; if(editingId){ saved=state.items.find(x=>x.id===editingId); Object.assign(saved,data); } else { saved={id:uid(),photo:'',checked:todayISO(),...data}; state.items.unshift(saved); }
-  SB.item(saved); save(); hide('ovItem'); rerender(); toast(editingId?'Ενημερώθηκε':'Προστέθηκε'); };
-document.getElementById('itemDelete').onclick=()=>{ const it=state.items.find(x=>x.id===editingId); if(editingId&&confirm('Οριστική διαγραφή «'+(it?it.name:'υλικού')+'»;\nΔεν αναιρείται.')){ state.items=state.items.filter(x=>x.id!==editingId); SB.delItem(editingId); save(); hide('ovItem'); rerender(); } };
+  SB.item(saved); logEvent(editingId?'επεξεργασία':'προσθήκη',saved); save(); hide('ovItem'); rerender(); toast(editingId?'Ενημερώθηκε':'Προστέθηκε'); };
+document.getElementById('itemDelete').onclick=()=>{ const it=state.items.find(x=>x.id===editingId); if(editingId&&confirm('Οριστική διαγραφή «'+(it?it.name:'υλικού')+'»;\nΔεν αναιρείται.')){ if(it)logEvent('διαγραφή',it); state.items=state.items.filter(x=>x.id!==editingId); SB.delItem(editingId); save(); hide('ovItem'); rerender(); } };
 document.getElementById('itemCancel').onclick=()=>hide('ovItem');
 document.getElementById('btnAdd').onclick=()=>openItem(null);
+document.getElementById('btnArch').onclick=()=>{ showArchived=!showArchived; renderBrowse(); };
 
 /* manage */
 function renderManage(){ const ml=document.getElementById('mgLocs'),lc=counts('loc'); ml.innerHTML=state.locations.map(l=>mgRow('loc',l,lc[l]||0)).join('');
@@ -918,6 +968,19 @@ document.getElementById('addLoc').onclick=()=>{ const v=document.getElementById(
 document.getElementById('addLab').onclick=()=>{ const v=document.getElementById('newLab').value.trim(); if(v&&!state.labels.includes(v)){ state.labels.push(v); SB.label(v); document.getElementById('newLab').value=''; save(); renderManage(); rerender(); } };
 document.getElementById('mgClose').onclick=()=>hide('ovManage');
 document.getElementById('btnManage').onclick=()=>{ renderManage(); show('ovManage'); };
+document.getElementById('btnLog').onclick=()=>{ show('ovLog'); renderLog(); };
+document.getElementById('logClose').onclick=()=>hide('ovLog');
+document.getElementById('logRefresh').onclick=()=>renderLog();
+async function renderLog(){ const el=document.getElementById('logList'); const wl=document.getElementById('logWho');
+  wl.innerHTML='Είσαι: <b>'+esc(whoName())+'</b> · <a href="#" id="logChgWho" style="color:var(--blue)">αλλαγή ονόματος</a>';
+  const cw=document.getElementById('logChgWho'); if(cw)cw.onclick=e=>{ e.preventDefault(); whoName(true); renderLog(); };
+  el.innerHTML='<div class="hint">Φόρτωση…</div>';
+  if(!sb||!sbReady){ el.innerHTML='<div class="hint">Χρειάζεται σύνδεση για το ημερολόγιο.</div>'; return; }
+  try{ const r=await sb.from('log').select('*').order('ts',{ascending:false}).limit(200); const data=r.data||[];
+    if(!data.length){ el.innerHTML='<div class="empty">Κενό ημερολόγιο — μόλις κάνεις κάτι, θα καταγράφεται εδώ.</div>'; return; }
+    el.innerHTML=data.map(x=>'<div class="logrow"><span class="logt">'+fmtDT(x.ts)+'</span> <b>'+esc(x.who||'—')+'</b> <span class="logact">'+esc(x.action)+'</span> '+esc(x.item_name||'')+(x.detail?' <span class="hint">('+esc(x.detail)+')</span>':'')+(x.loc?' <span class="hint">['+esc(x.loc)+']</span>':'')+'</div>').join('');
+  }catch(e){ el.innerHTML='<div class="hint">Σφάλμα φόρτωσης ημερολογίου.</div>'; }
+}
 document.getElementById('btnSettings').onclick=()=>{ document.getElementById('setOn').checked=settings.on!==false; document.getElementById('setBlue').value=settings.blue; document.getElementById('setGreen').value=settings.green; document.getElementById('setOrange').value=settings.orange; document.getElementById('setAdmin').checked=!!settings.admin; show('ovSettings'); };
 document.getElementById('setCancel').onclick=()=>hide('ovSettings');
 document.getElementById('setDefaults').onclick=()=>{ document.getElementById('setOn').checked=true; document.getElementById('setBlue').value=1; document.getElementById('setGreen').value=6; document.getElementById('setOrange').value=12; };
@@ -979,8 +1042,8 @@ try{ sbQueue=JSON.parse(localStorage.getItem(QKEY))||[]; }catch(e){ sbQueue=[]; 
 function saveQueue(){ try{ localStorage.setItem(QKEY,JSON.stringify(sbQueue)); }catch(e){} }
 function saveLocalOnly(){ try{ localStorage.setItem(KEY,JSON.stringify(state)); }catch(e){} }
 
-function itemToDb(i){ return {id:i.id,name:i.name,qty:String(i.qty==null?'':i.qty),loc:i.loc,unit_id:i.unit||null,box:i.box||'',note:i.note||'',labels:i.labels||[],photo:i.photo||'',checked:i.checked||null}; }
-function itemFromDb(r){ return {id:r.id,name:r.name,qty:r.qty==null?'':String(r.qty),loc:r.loc,unit:r.unit_id||'',box:r.box||'',note:r.note||'',labels:r.labels||[],photo:r.photo||'',checked:r.checked||''}; }
+function itemToDb(i){ return {id:i.id,name:i.name,qty:String(i.qty==null?'':i.qty),loc:i.loc,unit_id:i.unit||null,box:i.box||'',note:i.note||'',labels:i.labels||[],photo:i.photo||'',checked:i.checked||null,flags:i.flags||[],flag_note:i.flagNote||'',conditions:i.conditions||[]}; }
+function itemFromDb(r){ return {id:r.id,name:r.name,qty:r.qty==null?'':String(r.qty),loc:r.loc,unit:r.unit_id||'',box:r.box||'',note:r.note||'',labels:r.labels||[],photo:r.photo||'',checked:r.checked||'',flags:r.flags||[],flagNote:r.flag_note||'',conditions:r.conditions||[]}; }
 function unitToDb(u){ return {id:u.id,loc:u.loc,name:u.name,type:u.type||'ράφι',size:u.size||null,w:u.w||null,h:u.h||null,x:(u.x==null?null:u.x),y:(u.y==null?null:u.y)}; }
 function unitFromDb(r){ return {id:r.id,loc:r.loc,name:r.name,type:r.type||'ράφι',size:r.size||'M',w:(r.w==null?undefined:Number(r.w)),h:(r.h==null?undefined:Number(r.h)),x:(r.x==null?null:Number(r.x)),y:(r.y==null?null:Number(r.y))}; }
 function zoneToDb(z){ return {id:z.id,loc:z.loc,name:z.name,color:z.color||null,x:z.x,y:z.y,w:z.w,h:z.h}; }

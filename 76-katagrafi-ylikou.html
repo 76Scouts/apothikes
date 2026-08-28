@@ -272,6 +272,47 @@ tr.arch td,.card.arch,.recitem.arch,.uitem.arch{opacity:.5}
 .photobig{position:fixed;inset:0;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;z-index:90;padding:20px}
 .photobig.on{display:flex}
 .photobig img{max-width:100%;max-height:100%;border-radius:10px}
+.guidemodal,.repmodal{max-width:720px;width:94%}
+.guidehead,.rephead{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.guidehead b{font-size:16px}.rephead .right{margin-left:auto;display:flex;gap:8px}.rephead select{max-width:230px}
+.gprog{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.gprog-bar{flex:1;height:10px;background:#eef2f7;border-radius:999px;overflow:hidden}
+.gprog-bar i{display:block;height:100%;background:var(--blue);width:0;transition:width .2s}
+.gcard{text-align:center;padding:6px 2px}
+.gname{font-size:22px;font-weight:800;margin-bottom:4px}
+.gbox{color:var(--muted);font-weight:600}.gfresh{color:var(--muted);font-size:13px;margin:6px 0}
+.gqty{display:flex;justify-content:center;align-items:center;gap:10px;margin:14px 0}
+.gqty input{width:96px;text-align:center;font-size:24px;font-weight:800;padding:8px;border:1.5px solid var(--line);border-radius:12px}
+.gqty .bigstep{width:56px;height:56px;font-size:28px;border-radius:14px;border:1.5px solid var(--line);background:#fff}
+.gbtns{display:flex;gap:10px;margin-top:8px}
+.gbtn{flex:1;padding:16px;border-radius:14px;border:none;font-size:17px;font-weight:800;color:#fff;cursor:pointer}
+.gbtn.ok{background:#1f9d55}.gbtn.miss{background:#c77700;flex:0 0 42%}
+.gbtns2{display:flex;gap:10px;margin-top:10px;justify-content:center}
+.gpick{display:flex;flex-wrap:wrap;gap:10px}
+.gpickbtn{padding:14px 16px;border:1.5px solid var(--line);border-radius:12px;background:#fff;font-weight:700;font-size:15px;cursor:pointer}
+.gpickbtn .n{background:#eef2f7;border-radius:999px;padding:1px 8px;font-size:12px;margin-left:6px}
+.gdone{text-align:center}.gstats{display:flex;justify-content:center;gap:16px;margin:12px 0;flex-wrap:wrap}
+.gstats b{font-size:20px}.gmiss{text-align:left;max-width:420px;margin:0 auto 12px}.gmiss ul{margin:6px 0 0 18px}
+.gdone .right{display:flex;gap:8px;justify-content:center;margin-top:12px}
+.bulkbar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1.5px solid var(--line);box-shadow:0 -4px 16px rgba(0,0,0,.08);padding:10px 14px;display:none;z-index:60;align-items:center;gap:12px;flex-wrap:wrap}
+.bulkbar.on{display:flex}.bulkbar #bulkCount{font-weight:800}
+.bulkacts{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto}
+.selbox{width:22px;height:22px;vertical-align:middle;margin-right:8px}
+#btnSelect.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.repbody{max-height:70vh;overflow:auto}
+.rep-title h2{margin:0}.rep-sub{color:var(--muted);font-size:13px;margin-bottom:10px}
+.rep-sum{border-collapse:collapse;width:100%;margin:8px 0 16px}
+.rep-sum th,.rep-sum td{border:1px solid var(--line);padding:5px 8px;text-align:left;font-size:14px}
+.rep-sum td:nth-child(2),.rep-sum td:nth-child(3){text-align:right}
+.rep-loc h3{margin:14px 0 4px;border-bottom:2px solid var(--blue);padding-bottom:3px}
+.rep-unit h4{margin:8px 0 2px;color:var(--muted)}
+.rep-items{width:100%;border-collapse:collapse}
+.rep-items td{padding:3px 6px;border-bottom:1px dashed #e4e9ef;font-size:14px}
+.rep-items td.q{text-align:right;width:70px;font-weight:700}.rep-items td.fl{width:120px;font-size:11px;color:var(--muted)}
+.qrgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.qrcard{border:1px solid var(--line);border-radius:10px;padding:8px;text-align:center}
+.qrlabel{font-size:12px;margin-top:4px;line-height:1.2}.qrload{padding:20px;color:var(--muted)}
+@media print{ body>*{display:none!important} .overlay#ovReport.on,.overlay#ovQR.on{display:block!important;position:static;background:#fff;padding:0} #ovReport .modal,#ovQR .modal{box-shadow:none;max-width:none;width:auto;max-height:none} .repbody{max-height:none;overflow:visible} .no-print{display:none!important} .qrcard{break-inside:avoid} }
 </style>
 </head>
 <body>
@@ -288,7 +329,7 @@ tr.arch td,.card.arch,.recitem.arch,.uitem.arch{opacity:.5}
     <div class="badge"><img id="logo" alt="76"></div>
     <div class="htext"><h1>Καταγραφή Υλικού</h1><p>76ο Σύστημα Προσκόπων Στροβόλου · <span class="savechip" id="savechip">αποθηκεύεται τοπικά</span></p></div>
     <div class="hspacer"></div>
-    <div class="hbtns"><button id="btnSettings" title="Ρυθμίσεις χρωμάτων">⚙</button><button id="btnLog">📖 Ημερολόγιο</button><button id="btnManage">Τοποθεσίες &amp; Ετικέτες</button><button id="btnExport">Εξαγωγή</button><button id="btnImport">Εισαγωγή</button></div>
+    <div class="hbtns"><button id="btnSettings" title="Ρυθμίσεις χρωμάτων">⚙</button><button id="btnLog">📖 Ημερολόγιο</button><button id="btnManage">Τοποθεσίες &amp; Ετικέτες</button><button id="btnReport">🖨 Αναφορά</button><button id="btnQR">🔳 QR</button><button id="btnExport">Εξαγωγή</button><button id="btnImport">Εισαγωγή</button></div>
   </div>
   <div class="modeswitch">
     <button id="mBrowse" class="on">🔎 Προβολή</button>
@@ -374,6 +415,8 @@ tr.arch td,.card.arch,.recitem.arch,.uitem.arch{opacity:.5}
     <div class="searchrow">
       <input type="search" id="q" placeholder="Αναζήτηση υλικού, λεπτομέρειας, μονάδας…">
       <button class="btn p" id="btnAdd" style="padding:8px 12px">＋ Νέο υλικό</button>
+      <button class="btn" id="btnGuide" style="padding:8px 12px">▶ Οδηγός απογραφής</button>
+      <button class="btn" id="btnSelect" style="padding:8px 12px">☑ Επιλογή</button>
       <select id="groupBy" title="Ομαδοποίηση" style="max-width:170px"><option value="loc">Ανά τοποθεσία</option><option value="label">Ανά ετικέτα</option><option value="none">Χωρίς ομαδοποίηση</option></select>
       <span class="count" id="count" style="margin-left:auto"></span>
       <button id="btnArch" class="btn" style="padding:8px 12px" title="Υλικά με ποσότητα 0 (δεν διαγράφονται)">Αρχείο 0</button>
@@ -384,6 +427,40 @@ tr.arch td,.card.arch,.recitem.arch,.uitem.arch{opacity:.5}
     <div class="legend" id="freshLegend"></div>
   </div>
   <div id="list"></div>
+</div>
+
+<!-- guided stock-take -->
+<div class="overlay" id="ovGuide"><div class="modal guidemodal">
+  <div class="guidehead"><b id="guideLoc">Απογραφή</b><button class="btn" id="guideClose">Κλείσιμο</button></div>
+  <div class="gprog"><div class="gprog-bar"><i id="guideBar"></i></div><span id="guideCount"></span></div>
+  <div id="guideBody"></div>
+</div></div>
+
+<!-- report -->
+<div class="overlay" id="ovReport"><div class="modal repmodal">
+  <div class="rephead no-print"><b>Αναφορά «τι έχει πού»</b>
+    <select id="repScope"></select>
+    <span class="right"><button class="btn" id="repPrint">🖨 Εκτύπωση</button><button class="btn" id="repClose">Κλείσιμο</button></span></div>
+  <div id="repBody" class="repbody"></div>
+</div></div>
+
+<!-- QR -->
+<div class="overlay" id="ovQR"><div class="modal repmodal">
+  <div class="rephead no-print"><b id="qrTitle">QR</b><span class="right"><button class="btn" id="qrPrint">🖨 Εκτύπωση</button><button class="btn" id="qrClose">Κλείσιμο</button></span></div>
+  <div id="qrBody" style="text-align:center"></div>
+</div></div>
+
+<!-- bulk action bar -->
+<div id="bulkBar" class="bulkbar">
+  <span id="bulkCount"></span>
+  <div class="bulkacts">
+    <button class="btn" data-b="confirm">✓ Απογραφή</button>
+    <button class="btn" data-b="loc">Τοποθεσία…</button>
+    <button class="btn" data-b="label">＋ Ετικέτα…</button>
+    <button class="btn" data-b="arch">Αρχειοθέτηση</button>
+    <button class="btn danger" data-b="del">Διαγραφή</button>
+    <button class="btn" data-b="cancel">Άκυρο</button>
+  </div>
 </div>
 
 <!-- item modal -->
@@ -490,7 +567,7 @@ document.getElementById('logo').src = LOGO;
 /* ===== απλό κλείδωμα εισόδου (θυμάται τη συσκευή) ===== */
 const GATE_CODE='476';
 (function(){ const g=document.getElementById('gate'); const gl=document.getElementById('gateLogo'); if(gl)gl.src=LOGO;
-  const off=()=>g.classList.add('off');
+  const off=()=>{ g.classList.add('off'); try{handleHash();}catch(e){} };
   try{ if(localStorage.getItem('76inv:gate')===GATE_CODE) off(); }catch(e){}
   const submit=()=>{ const v=(document.getElementById('gateInput').value||'').trim(); if(v===GATE_CODE){ try{localStorage.setItem('76inv:gate',GATE_CODE);}catch(e){} document.getElementById('gateErr').textContent=''; off(); } else { document.getElementById('gateErr').textContent='Λάθος κωδικός'; const i=document.getElementById('gateInput'); i.value=''; i.focus&&i.focus(); } };
   document.getElementById('gateBtn').onclick=submit;
@@ -714,6 +791,7 @@ function handleAct(e){ const el=e.currentTarget; const id=el.dataset.id; const a
   if(act==='viewphoto'){ if(i&&i.photo)viewPhoto(i.photo); return; }
   if(act==='addphoto'){ const inp=document.getElementById('recPhotoInput'); inp.setAttribute('data-target',id); inp.click(); return; }
   if(act==='loan'){ openLoan(id); return; }
+  if(act==='sel'){ if(el.checked)selSet.add(id); else selSet.delete(id); updateBulkBar(); return; }
   if(!i&&act!=='edit')return;
   if(act==='inc'||act==='dec'){ const _o=i.qty; let n=num(i.qty); if(n==null)n=0; n+=act==='inc'?1:-1; if(n<0)n=0; i.qty=String(n); i.checked=todayISO(); SB.step(i,act==='inc'?1:-1); logEvent('ποσότητα',i,_o+'→'+i.qty+(num(i.qty)===0?' · αρχειοθετήθηκε':(num(_o)===0?' · επαναφορά':''))); save(); rerender(); }
   else if(act==='qty'){ const _o=i.qty; i.qty=el.value.trim(); i.checked=todayISO(); SB.item(i); logEvent('ποσότητα',i,_o+'→'+i.qty+(num(i.qty)===0?' · αρχειοθετήθηκε':(num(_o)===0?' · επαναφορά':''))); save(); rerender(); toast('Ποσότητα: '+i.qty); }
@@ -723,6 +801,101 @@ function handleAct(e){ const el=e.currentTarget; const id=el.dataset.id; const a
   else if(act==='del'){ if(confirm('Οριστική διαγραφή «'+i.name+'»;\nΔεν αναιρείται.')){ logEvent('διαγραφή',i); state.items=state.items.filter(x=>x.id!==id); SB.delItem(id); save(); rerender(); toast('Διαγράφηκε'); } }
 }
 function rerender(){ if(state.mode==='rec')renderRec(); else if(state.mode==='loans')renderLoans(); else if(state.mode==='over')renderOver(); else renderBrowse(); refreshBadges(); }
+
+/* ===== Οδηγός απογραφής (guided stock-take) ===== */
+let guide=null;
+function openGuidePicker(){ document.getElementById('guideLoc').textContent='Απογραφή — διάλεξε χώρο'; document.getElementById('guideBar').style.width='0%'; document.getElementById('guideCount').textContent='';
+  const cnts={}; state.items.forEach(i=>{ if(!isArchived(i))cnts[i.loc]=(cnts[i.loc]||0)+1; });
+  document.getElementById('guideBody').innerHTML='<div class="gpick">'+state.locations.map(l=>'<button class="gpickbtn" data-loc="'+esc(l)+'">'+esc(l)+' <span class="n">'+(cnts[l]||0)+'</span></button>').join('')+'</div>';
+  document.querySelectorAll('#guideBody .gpickbtn').forEach(b=>b.onclick=()=>startGuide(b.dataset.loc));
+  show('ovGuide'); }
+function startGuide(loc,unitId){ let arr=state.items.filter(i=>i.loc===loc && !isArchived(i)); if(unitId)arr=arr.filter(i=>i.unit===unitId);
+  arr.sort((a,b)=>(boxLabel(a)||'').localeCompare(boxLabel(b)||'','el')||a.name.localeCompare(b.name,'el'));
+  guide={loc,unit:unitId||'',ids:arr.map(i=>i.id),idx:0,ok:0,fix:0,miss:[]};
+  document.getElementById('guideLoc').textContent='Απογραφή: '+loc+(unitId?(' · '+unitName(unitId)):''); show('ovGuide'); renderGuide(); }
+function renderGuide(){ if(!guide)return; const body=document.getElementById('guideBody'),bar=document.getElementById('guideBar'),cnt=document.getElementById('guideCount');
+  if(!guide.ids.length){ bar.style.width='100%'; cnt.textContent=''; body.innerHTML='<div class="gdone"><h3>Κανένα είδος εδώ.</h3><div class="right"><button class="btn p" id="guideFinish">Τέλος</button></div></div>'; document.getElementById('guideFinish').onclick=()=>{ hide('ovGuide'); guide=null; rerender(); }; return; }
+  if(guide.idx>=guide.ids.length){ bar.style.width='100%'; cnt.textContent='ολοκληρώθηκε';
+    const missNames=guide.miss.map(id=>{const it=state.items.find(x=>x.id===id);return it?it.name:id;});
+    body.innerHTML='<div class="gdone"><h3>Ολοκληρώθηκε! 🎉</h3>'+
+      '<div class="gstats"><span>✓ σωστά <b>'+guide.ok+'</b></span><span>✎ διορθώθηκαν <b>'+guide.fix+'</b></span><span>❓ δεν βρέθηκαν <b>'+guide.miss.length+'</b></span></div>'+
+      (missNames.length?'<div class="gmiss"><b>Δεν βρέθηκαν:</b><ul>'+missNames.map(n=>'<li>'+esc(n)+'</li>').join('')+'</ul></div>':'<p>Όλα βρέθηκαν. 👍</p>')+
+      '<div class="right">'+(missNames.length?'<button class="btn" id="guideCopy">Αντιγραφή λίστας</button>':'')+'<button class="btn p" id="guideFinish">Τέλος</button></div></div>';
+    const gc=document.getElementById('guideCopy'); if(gc)gc.onclick=()=>{ try{navigator.clipboard.writeText('Δεν βρέθηκαν ('+guide.loc+'):\n'+missNames.join('\n'));toast('Αντιγράφηκε');}catch(e){} };
+    document.getElementById('guideFinish').onclick=()=>{ hide('ovGuide'); guide=null; rerender(); }; return; }
+  const id=guide.ids[guide.idx],i=state.items.find(x=>x.id===id); if(!i){ guide.idx++; return renderGuide(); }
+  bar.style.width=Math.round(guide.idx/guide.ids.length*100)+'%'; cnt.textContent=(guide.idx+1)+' / '+guide.ids.length;
+  const bl=boxLabel(i);
+  body.innerHTML='<div class="gcard"><div class="gname">'+freshDot(i)+esc(i.name)+'</div>'+(bl?'<div class="gbox">'+esc(bl)+'</div>':'')+'<div class="gfresh">'+freshDateStr(i)+flagBadges(i)+'</div>'+
+    '<div class="gqty"><button class="bigstep" id="gDec">−</button><input id="gQty" inputmode="numeric" value="'+esc(i.qty)+'"><button class="bigstep" id="gInc">＋</button></div>'+
+    '<div class="gbtns"><button class="gbtn ok" id="gOk">✓ Σωστό / μετρήθηκε</button><button class="gbtn miss" id="gMiss">❓ Δεν βρέθηκε</button></div>'+
+    '<div class="gbtns2"><button class="btn" id="gEdit">✎ Πλήρης επεξεργασία</button><button class="btn" id="gSkip">Παράλειψη →</button></div></div>';
+  const qEl=document.getElementById('gQty');
+  document.getElementById('gInc').onclick=()=>{ let n=num(qEl.value); if(n==null)n=0; qEl.value=String(n+1); };
+  document.getElementById('gDec').onclick=()=>{ let n=num(qEl.value); if(n==null)n=0; if(n>0)qEl.value=String(n-1); };
+  document.getElementById('gOk').onclick=()=>{ const _o=i.qty,nv=qEl.value.trim(),changed=(String(nv)!==String(_o));
+    if(changed){ i.qty=nv; logEvent('ποσότητα',i,_o+'→'+i.qty); guide.fix++; } else guide.ok++;
+    i.checked=todayISO(); SB.item(i); logEvent('απογραφή',i); save(); guide.idx++; renderGuide(); };
+  document.getElementById('gMiss').onclick=()=>{ guide.miss.push(id); guide.idx++; renderGuide(); };
+  document.getElementById('gEdit').onclick=()=>openItem(id);
+  document.getElementById('gSkip').onclick=()=>{ guide.idx++; renderGuide(); }; }
+document.getElementById('guideClose').onclick=()=>{ hide('ovGuide'); guide=null; rerender(); };
+document.getElementById('btnGuide').onclick=openGuidePicker;
+
+/* ===== Μαζικές ενέργειες ===== */
+let selMode=false; const selSet=new Set();
+function selBox(i){ return selMode?('<input type="checkbox" class="selbox" data-act="sel" data-ev="change" data-id="'+i.id+'"'+(selSet.has(i.id)?' checked':'')+'>'):''; }
+function toggleSelMode(on){ selMode=(on==null?!selMode:!!on); if(!selMode)selSet.clear(); const b=document.getElementById('btnSelect'); if(b)b.classList.toggle('on',selMode); renderBrowse(); updateBulkBar(); }
+function updateBulkBar(){ const bar=document.getElementById('bulkBar'); if(!bar)return; if(selMode&&selSet.size){ bar.classList.add('on'); document.getElementById('bulkCount').textContent=selSet.size+' επιλεγμένα'; } else bar.classList.remove('on'); }
+function pickFromList(title,arr){ const v=prompt(title+'\n('+arr.join(' · ')+')',''); if(v==null)return null; const t=v.trim().toLowerCase(); return arr.find(x=>x.toLowerCase()===t)||null; }
+function bulkApply(b){ if(b==='cancel'){ toggleSelMode(false); return; } const ids=[...selSet]; if(!ids.length){ toast('Δεν επέλεξες τίποτα'); return; }
+  const its=()=>ids.map(id=>state.items.find(x=>x.id===id)).filter(Boolean);
+  if(b==='confirm'){ const t=todayISO(); its().forEach(i=>{ i.checked=t; SB.item(i); logEvent('απογραφή',i); }); save(); toast('✓ Απογραφή ×'+ids.length); }
+  else if(b==='loc'){ const loc=pickFromList('Μεταφορά σε αποθήκη:',state.locations); if(!loc){ toast('Άκυρο / άγνωστη αποθήκη'); return; } its().forEach(i=>{ i.loc=loc; i.unit=''; SB.item(i); logEvent('μετακίνηση',i,'προς '+loc); }); save(); toast('Μεταφέρθηκαν → '+loc); }
+  else if(b==='label'){ const lab=pickFromList('Πρόσθεσε ετικέτα:',state.labels); if(!lab){ toast('Άκυρο / άγνωστη ετικέτα'); return; } its().forEach(i=>{ i.labels=i.labels||[]; if(!i.labels.includes(lab)){ i.labels.push(lab); SB.item(i); logEvent('επεξεργασία',i,'+ετικέτα '+lab); } }); save(); toast('Ετικέτα σε ×'+ids.length); }
+  else if(b==='arch'){ if(!confirm('Αρχειοθέτηση '+ids.length+' ειδών; (ποσότητα → 0)'))return; its().forEach(i=>{ i.qty='0'; i.checked=todayISO(); SB.item(i); logEvent('ποσότητα',i,'→0 · αρχειοθετήθηκε'); }); save(); toast('Αρχειοθετήθηκαν ×'+ids.length); }
+  else if(b==='del'){ if(!confirm('ΟΡΙΣΤΙΚΗ διαγραφή '+ids.length+' ειδών;\nΔεν αναιρείται.'))return; its().forEach(i=>{ logEvent('διαγραφή',i); SB.delItem(i.id); }); const del=new Set(ids); state.items=state.items.filter(x=>!del.has(x.id)); save(); toast('Διαγράφηκαν ×'+ids.length); }
+  toggleSelMode(false); }
+document.getElementById('btnSelect').onclick=()=>toggleSelMode();
+document.querySelectorAll('#bulkBar [data-b]').forEach(b=>b.onclick=()=>bulkApply(b.dataset.b));
+
+/* ===== Αναφορά «τι έχει πού» ===== */
+function openReport(scope){ const sel=document.getElementById('repScope'); sel.innerHTML='<option value="__all">Όλες οι αποθήκες (συγκεντρωτικά)</option>'+state.locations.map(l=>'<option value="'+esc(l)+'">'+esc(l)+'</option>').join(''); if(scope)sel.value=scope; sel.onchange=()=>renderReport(sel.value); renderReport(sel.value); show('ovReport'); }
+function renderReport(scope){ const body=document.getElementById('repBody'); const locs=(scope&&scope!=='__all')?[scope]:state.locations;
+  let html='<div class="rep-title"><h2>Αναφορά υλικού — «τι έχει πού»</h2><div class="rep-sub">76ο Σύστημα Προσκόπων Στροβόλου · '+fmtDate(todayISO())+'</div></div>';
+  html+='<table class="rep-sum"><thead><tr><th>Αποθήκη</th><th>Είδη</th><th>Τεμάχια</th></tr></thead><tbody>';
+  locs.forEach(l=>{ const arr=state.items.filter(i=>i.loc===l&&!isArchived(i)); const tot=arr.reduce((s,i)=>s+(num(i.qty)||0),0); html+='<tr><td>'+esc(l)+'</td><td>'+arr.length+'</td><td>'+(Math.round(tot*100)/100)+'</td></tr>'; });
+  html+='</tbody></table>';
+  locs.forEach(l=>{ const arr=state.items.filter(i=>i.loc===l&&!isArchived(i)); if(!arr.length)return;
+    html+='<div class="rep-loc"><h3>'+esc(l)+'</h3>';
+    const m=new Map(); arr.forEach(i=>{ const u=boxLabel(i)||'— χωρίς μονάδα —'; if(!m.has(u))m.set(u,[]); m.get(u).push(i); });
+    [...m.keys()].sort((a,b)=>a.localeCompare(b,'el')).forEach(u=>{ html+='<div class="rep-unit"><h4>'+esc(u)+'</h4><table class="rep-items"><tbody>'+
+      m.get(u).sort((a,b)=>a.name.localeCompare(b.name,'el')).map(i=>'<tr><td>'+esc(i.name)+'</td><td class="q">'+esc(i.qty)+'</td><td class="fl">'+((i.flags||[]).map(k=>{const f=FLAGS.find(x=>x.k===k);return f?f.s:'';}).join(' '))+'</td></tr>').join('')+'</tbody></table></div>'; });
+    html+='</div>'; });
+  body.innerHTML=html; }
+document.getElementById('btnReport').onclick=()=>openReport();
+document.getElementById('repClose').onclick=()=>hide('ovReport');
+document.getElementById('repPrint').onclick=()=>window.print();
+
+/* ===== QR ανά μονάδα + hash routing ===== */
+let _qrlib=null;
+async function qrLib(){ if(_qrlib)return _qrlib; if(!window.QRCode){ await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); }); } _qrlib=window.QRCode; return _qrlib; }
+function appBase(){ return location.origin+location.pathname; }
+function unitDeepLink(id){ return appBase()+'#u='+encodeURIComponent(id); }
+async function showLocQRSheet(loc){ const us=unitsOf(loc); document.getElementById('qrTitle').textContent='QR — '+loc; const body=document.getElementById('qrBody'); if(!us.length){ body.innerHTML='<div class="qrload">Καμία μονάδα (ράφι/κουτί) σε '+esc(loc)+'. Πρόσθεσέ τες από τις «Αποθήκες».</div>'; show('ovQR'); return; }
+  body.innerHTML='<div class="qrload">Δημιουργία QR…</div>'; show('ovQR');
+  try{ const L=await qrLib(); const grid=document.createElement('div'); grid.className='qrgrid'; for(const u of us){ const cell=document.createElement('div'); cell.className='qrcard'; const c=document.createElement('canvas'); await L.toCanvas(c,unitDeepLink(u.id),{width:150,margin:1}); cell.appendChild(c); cell.insertAdjacentHTML('beforeend','<div class="qrlabel"><b>'+esc(u.name)+'</b><br>'+esc(u.loc)+'</div>'); grid.appendChild(cell); } body.innerHTML=''; body.appendChild(grid); }
+  catch(e){ body.innerHTML='<div class="qrload">Δεν φορτώθηκε η βιβλιοθήκη QR (χρειάζεται σύνδεση στο διαδίκτυο μία φορά).</div>'; } }
+document.getElementById('qrClose').onclick=()=>hide('ovQR');
+document.getElementById('qrPrint').onclick=()=>window.print();
+document.getElementById('btnQR').onclick=()=>{ const l=pickFromList('QR φύλλο μονάδων για αποθήκη:',state.locations)|| (state.locations[0]); if(l)showLocQRSheet(l); };
+function handleHash(){ let h=''; try{ h=location.hash||''; }catch(e){} if(!h)return;
+  if(h.indexOf('#u=')===0){ const id=decodeURIComponent(h.slice(3)); const u=unitById(id); if(u){ setMode('browse'); startGuide(u.loc,id); } }
+  else if(h.indexOf('#guide=')===0){ const l=decodeURIComponent(h.slice(7)); if(state.locations.includes(l))startGuide(l); }
+  else if(h.indexOf('#loc=')===0){ const l=decodeURIComponent(h.slice(5)); if(state.locations.includes(l)){ state.rec.loc=l; save(); setMode('rec'); } }
+  try{ history.replaceState(null,'',location.pathname); }catch(e){} }
+window.addEventListener('hashchange',()=>{ if(!document.getElementById('gate').classList.contains('off'))return; handleHash(); });
+window.addEventListener('load',()=>{ try{ if(document.getElementById('gate').classList.contains('off'))handleHash(); }catch(e){} });
 
 /* ===== LOANS ===== */
 function renderLoans(){
@@ -978,8 +1151,8 @@ function groupEl(title,arr){ const wrap=document.createElement('div'); wrap.clas
   table.innerHTML='<thead><tr><th style="width:34%">Υλικό</th><th>Ποσότητα</th><th>Τοποθεσία</th><th>Ετικέτες</th><th></th></tr></thead><tbody>'+arr.map(rowHTML).join('')+'</tbody>';
   wrap.appendChild(table); const cards=document.createElement('div'); cards.className='cards'; cards.innerHTML=arr.map(cardHTML).join(''); wrap.appendChild(cards);
   wrap.querySelectorAll('[data-act]').forEach(el=>el.addEventListener(el.dataset.ev||'click',handleAct)); return wrap; }
-function rowHTML(i){ const bl=boxLabel(i),out=itemOut(i.id); return '<tr'+(isArchived(i)?' class="arch"':'')+'><td><span class="iname">'+freshDot(i)+esc(i.name)+'</span>'+(bl?'<span class="ibox">'+esc(bl)+'</span>':'')+(out>0?'<span class="outchip">'+out+' έξω</span>':'')+(isArchived(i)?'<span class="archchip">αρχειοθετημένο</span>':'')+flagBadges(i)+(i.note?'<div class="inote">'+esc(i.note)+'</div>':'')+'<div class="freshdate">'+freshDateStr(i)+'</div></td><td>'+qtyHTML(i)+'</td><td>'+locHTML(i)+'</td><td>'+labHTML(i)+'</td><td><div class="rowact">'+confirmBtn(i)+'<button class="loan" data-act="loan" data-id="'+i.id+'">🤝</button><button data-act="edit" data-id="'+i.id+'">✎</button><button class="del" data-act="del" data-id="'+i.id+'">🗑</button></div></td></tr>'; }
-function cardHTML(i){ const bl=boxLabel(i),out=itemOut(i.id); return '<div class="card'+(isArchived(i)?' arch':'')+'"><div class="top"><div><span class="iname">'+freshDot(i)+esc(i.name)+'</span>'+(bl?'<span class="ibox">'+esc(bl)+'</span>':'')+(out>0?'<span class="outchip">'+out+' έξω</span>':'')+(isArchived(i)?'<span class="archchip">αρχειοθετημένο</span>':'')+flagBadges(i)+(i.note?'<div class="inote">'+esc(i.note)+'</div>':'')+'<div class="freshdate">'+freshDateStr(i)+'</div></div>'+qtyHTML(i)+'</div><div class="meta">'+locHTML(i)+labHTML(i)+'<div class="rowact" style="margin-left:auto">'+confirmBtn(i)+'<button class="loan" data-act="loan" data-id="'+i.id+'">🤝</button><button data-act="edit" data-id="'+i.id+'">✎</button><button class="del" data-act="del" data-id="'+i.id+'">🗑</button></div></div></div>'; }
+function rowHTML(i){ const bl=boxLabel(i),out=itemOut(i.id); return '<tr'+(isArchived(i)?' class="arch"':'')+'><td>'+selBox(i)+'<span class="iname">'+freshDot(i)+esc(i.name)+'</span>'+(bl?'<span class="ibox">'+esc(bl)+'</span>':'')+(out>0?'<span class="outchip">'+out+' έξω</span>':'')+(isArchived(i)?'<span class="archchip">αρχειοθετημένο</span>':'')+flagBadges(i)+(i.note?'<div class="inote">'+esc(i.note)+'</div>':'')+'<div class="freshdate">'+freshDateStr(i)+'</div></td><td>'+qtyHTML(i)+'</td><td>'+locHTML(i)+'</td><td>'+labHTML(i)+'</td><td><div class="rowact">'+confirmBtn(i)+'<button class="loan" data-act="loan" data-id="'+i.id+'">🤝</button><button data-act="edit" data-id="'+i.id+'">✎</button><button class="del" data-act="del" data-id="'+i.id+'">🗑</button></div></td></tr>'; }
+function cardHTML(i){ const bl=boxLabel(i),out=itemOut(i.id); return '<div class="card'+(isArchived(i)?' arch':'')+'"><div class="top">'+selBox(i)+'<div><span class="iname">'+freshDot(i)+esc(i.name)+'</span>'+(bl?'<span class="ibox">'+esc(bl)+'</span>':'')+(out>0?'<span class="outchip">'+out+' έξω</span>':'')+(isArchived(i)?'<span class="archchip">αρχειοθετημένο</span>':'')+flagBadges(i)+(i.note?'<div class="inote">'+esc(i.note)+'</div>':'')+'<div class="freshdate">'+freshDateStr(i)+'</div></div>'+qtyHTML(i)+'</div><div class="meta">'+locHTML(i)+labHTML(i)+'<div class="rowact" style="margin-left:auto">'+confirmBtn(i)+'<button class="loan" data-act="loan" data-id="'+i.id+'">🤝</button><button data-act="edit" data-id="'+i.id+'">✎</button><button class="del" data-act="del" data-id="'+i.id+'">🗑</button></div></div></div>'; }
 function qtyHTML(i){ return '<div class="qtybox"><button class="qstep" data-act="dec" data-id="'+i.id+'">−</button><input data-act="qty" data-ev="change" data-id="'+i.id+'" value="'+esc(i.qty)+'"><button class="qstep" data-act="inc" data-id="'+i.id+'">+</button></div>'; }
 function locHTML(i){ const opts=state.locations.map(l=>'<option'+(l===i.loc?' selected':'')+'>'+esc(l)+'</option>').join(''); const extra=state.locations.includes(i.loc)?'':'<option selected>'+esc(i.loc)+'</option>'; return '<select class="locsel" data-act="loc" data-ev="change" data-id="'+i.id+'">'+extra+opts+'</select>'; }
 function labHTML(i){ const chips=(i.labels||[]).map(l=>'<span class="lchip">'+esc(l)+'</span>').join(''); return '<div class="lchips">'+chips+'<span class="lchip add" data-act="edit" data-id="'+i.id+'">＋ ετικέτα</span></div>'; }

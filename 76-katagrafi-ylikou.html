@@ -312,6 +312,7 @@ tr.arch td,.card.arch,.recitem.arch,.uitem.arch{opacity:.5}
 .qrgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
 .qrcard{border:1px solid var(--line);border-radius:10px;padding:8px;text-align:center}
 .qrlabel{font-size:12px;margin-top:4px;line-height:1.2}.qrload{padding:20px;color:var(--muted)}
+.chip.chipdis{opacity:.45}
 @media print{ body>*{display:none!important} .overlay#ovReport.on,.overlay#ovQR.on{display:block!important;position:static;background:#fff;padding:0} #ovReport .modal,#ovQR .modal{box-shadow:none;max-width:none;width:auto;max-height:none} .repbody{max-height:none;overflow:visible} .no-print{display:none!important} .qrcard{break-inside:avoid} }
 </style>
 </head>
@@ -941,9 +942,9 @@ function setLoanKind(k){ loanKind=k;
   document.getElementById('lSection').style.display=isS?'':'none';
   document.getElementById('lEvent').style.display=isE?'':'none';
   document.getElementById('lBorrowerLbl').textContent = isP?'Ενήλικας βαθμοφόρος' : isS?'Τμήμα' : 'Τίτλος δράσης / εκδήλωσης';
-  document.getElementById('lRespFld').style.display = isP?'none':''; // υπεύθυνος μόνο για τμήμα/δράση
+  document.getElementById('lRespFld').style.display = (isP||!AUTHED)?'none':''; // υπεύθυνος: μόνο τμήμα/δράση ΚΑΙ μόνο με σύνδεση (προσωπικό)
 }
-[...document.querySelectorAll('#lKind .chip')].forEach(c=>c.onclick=()=>setLoanKind(c.dataset.k));
+[...document.querySelectorAll('#lKind .chip')].forEach(c=>c.onclick=()=>{ if(c.dataset.k==='person'&&!AUTHED){ toast('Ονομαστικός δανεισμός σε βαθμοφόρο: διαθέσιμο με τη σύνδεση'); return; } setLoanKind(c.dataset.k); });
 function openLoan(itemId){ document.getElementById('loanTitle').textContent='Νέος δανεισμός';
   const sel=document.getElementById('lItem'); sel.innerHTML=state.items.map(i=>'<option value="'+i.id+'">'+esc(i.name)+' — '+esc(i.loc)+'</option>').join('');
   if(itemId)sel.value=itemId;
@@ -953,7 +954,8 @@ function openLoan(itemId){ document.getElementById('loanTitle').textContent='Ν�
   document.getElementById('lResp').innerHTML='<option value="">— κανένας —</option>'+roster.map(p=>'<option value="'+esc(p.id)+'">'+esc(p.name)+'</option>').join('');
   document.getElementById('lSection').innerHTML=LOAN_SECTIONS.map(s=>'<option value="'+esc(s)+'">'+esc(s)+'</option>').join('');
   document.getElementById('lEvent').value=''; document.getElementById('lPersonRef').value=''; document.getElementById('lQty').value='1';
-  setLoanKind('person');
+  { const pc=[...document.querySelectorAll('#lKind .chip')].find(c=>c.dataset.k==='person'); if(pc){ pc.classList.toggle('chipdis',!AUTHED); pc.title=AUTHED?'':'Διαθέσιμο με τη σύνδεση'; } }
+  setLoanKind(AUTHED?'person':'section');
   document.getElementById('lOut').value=todayISO(); document.getElementById('lDue').value=addDaysISO(todayISO(),14); document.getElementById('lNote').value='';
   updAvail(); sel.onchange=updAvail; show('ovLoan'); setTimeout(()=>document.getElementById('lWho').focus(),50);
 }
@@ -961,12 +963,13 @@ function updAvail(){ const i=state.items.find(x=>x.id===document.getElementById(
   const av=available(i); document.getElementById('lAvail').textContent = av==null?('Σύνολο: '+(i.qty||'—')):('Διαθέσιμα τώρα: '+av+' από '+i.qty); }
 document.getElementById('loanCancel').onclick=()=>hide('ovLoan');
 document.getElementById('loanSave').onclick=()=>{ const i=state.items.find(x=>x.id===document.getElementById('lItem').value); if(!i){ toast('Διάλεξε υλικό'); return; }
-  if(!AUTHED){ toast('Ο δανεισμός ενεργοποιείται με τη σύνδεση'); return; }
   const roster=(state.staff||[]);
   let who='', personRef='', borrowerKind=loanKind, borrowerLabel='';
   if(loanKind==='person'){ const person=roster.find(p=>p.id===document.getElementById('lWho').value); if(!person){ toast('Διάλεξε ενήλικα βαθμοφόρο από τον κατάλογο'); return; } who=person.name; personRef=person.id; }
   else if(loanKind==='section'){ borrowerLabel=document.getElementById('lSection').value; if(!borrowerLabel){ toast('Διάλεξε τμήμα'); return; } const r=roster.find(p=>p.id===document.getElementById('lResp').value); if(r){ who=r.name; personRef=r.id; } }
   else { borrowerLabel=document.getElementById('lEvent').value.trim(); if(!borrowerLabel){ toast('Γράψε τίτλο δράσης/εκδήλωσης'); return; } const r=roster.find(p=>p.id===document.getElementById('lResp').value); if(r){ who=r.name; personRef=r.id; } }
+  const personal=(borrowerKind==='person')||!!personRef||(who&&who!=='');
+  if(personal && !AUTHED){ toast('Ονομαστικός δανεισμός σε βαθμοφόρο: διαθέσιμο με τη σύνδεση'); return; }
   let qty=num(document.getElementById('lQty').value)||1; if(qty<1)qty=1;
   const L={id:uid(),itemId:i.id,itemName:i.name,loc:i.loc,who,personRef,borrowerKind,borrowerLabel,qty:String(qty),returned:'0',out:document.getElementById('lOut').value||todayISO(),due:document.getElementById('lDue').value||'',back:'',note:document.getElementById('lNote').value.trim()};
   state.loans.unshift(L); SB.loan(L); logEvent('δανεισμός',i,'×'+qty); save(); hide('ovLoan'); toast('🤝 Δανείστηκε → '+(borrowerLabel||who)); if(state.mode==='loans')renderLoans(); else rerender(); }
@@ -1288,8 +1291,8 @@ function loanToDb(l){ return {id:l.id,item_id:l.itemId||null,item_name:l.itemNam
 function loanFromDb(r){ return {id:r.id,itemId:r.item_id||'',itemName:r.item_name||'',loc:r.loc||'',who:r.who||'',personRef:r.person_ref||'',borrowerKind:r.borrower_kind||'person',borrowerLabel:r.borrower_label||'',qty:String(r.qty),returned:String(r.returned==null?0:r.returned),out:r.out||'',due:r.due||'',back:r.back||'',note:r.note||''}; }
 
 const SB={
-  up(t,o){ if(!AUTHED&&(t==='loans'||t==='log'))return; sbQueue.push({op:'up',t,o}); saveQueue(); flushQueue(); },
-  del(t,id){ if(!AUTHED&&(t==='loans'||t==='log'))return; sbQueue.push({op:'del',t,id}); saveQueue(); flushQueue(); },
+  up(t,o){ if(!AUTHED){ if(t==='log')return; if(t==='loans' && (o.borrower_kind==='person' || (o.who&&o.who!=='') || o.person_ref))return; } sbQueue.push({op:'up',t,o}); saveQueue(); flushQueue(); },
+  del(t,id){ if(!AUTHED && t==='log')return; sbQueue.push({op:'del',t,id}); saveQueue(); flushQueue(); },
   step(i,d){ sbQueue.push({op:'rpc',fn:'adjust_item_qty',args:{p_id:i.id,p_delta:d}}); saveQueue(); flushQueue(); },
   item(i){ this.up('items',itemToDb(i)); }, delItem(id){ this.del('items',id); },
   unit(u){ this.up('units',unitToDb(u)); }, delUnit(id){ this.del('units',id); },
@@ -1324,7 +1327,7 @@ async function pullAll(){
   const [loc,lab,un,zo,it,ln,sp]=await Promise.all([
     sb.from('locations').select('*'), sb.from('labels').select('*'),
     sb.from('units').select('*'), sb.from('zones').select('*'),
-    sb.from('items').select('*'), (AUTHED?sb.from('loans').select('*'):Promise.resolve({data:[]})), sb.from('site_positions').select('*')]);
+    sb.from('items').select('*'), sb.from('loans').select('*'), sb.from('site_positions').select('*')]);
   const empty=!(it.data&&it.data.length)&&!(loc.data&&loc.data.length);
   if(empty){ await firstPush(); return; }
   if(loc.data&&loc.data.length) state.locations=uniq(loc.data.slice().sort((a,b)=>(a.ord||0)-(b.ord||0)).map(r=>r.name));
@@ -1332,7 +1335,7 @@ async function pullAll(){
   state.units=(un.data||[]).map(unitFromDb);
   state.zones=(zo.data||[]).map(zoneFromDb);
   state.items=(it.data||[]).map(itemFromDb);
-  if(AUTHED) state.loans=(ln.data||[]).map(loanFromDb);
+  state.loans=(ln.data||[]).map(loanFromDb);
   state.site={}; (sp.data||[]).forEach(r=>{ state.site[r.id]={x:Number(r.x),y:Number(r.y)}; });
   saveLocalOnly(); rerender();
 }
@@ -1344,7 +1347,7 @@ async function firstPush(){
   if(state.zones.length) await sb.from('zones').upsert(state.zones.map(zoneToDb));
   const items=state.items.map(itemToDb);
   for(let k=0;k<items.length;k+=200){ await sb.from('items').upsert(items.slice(k,k+200)); }
-  if(AUTHED&&state.loans.length) await sb.from('loans').upsert(state.loans.map(loanToDb));
+  { const _L=AUTHED?state.loans:state.loans.filter(l=>l.borrowerKind&&l.borrowerKind!=='person'&&!l.personRef&&!(l.who&&l.who!=='')); if(_L.length) await sb.from('loans').upsert(_L.map(loanToDb)); }
   updateSyncChip('online');
 }
 async function syncBulkUpsert(){ if(!sbReady||!sb)return; try{
@@ -1353,7 +1356,7 @@ async function syncBulkUpsert(){ if(!sbReady||!sb)return; try{
   if(state.units.length) await sb.from('units').upsert(state.units.map(unitToDb));
   if(state.zones.length) await sb.from('zones').upsert(state.zones.map(zoneToDb));
   const its=state.items.map(itemToDb); for(let k=0;k<its.length;k+=200) await sb.from('items').upsert(its.slice(k,k+200));
-  if(AUTHED&&state.loans.length) await sb.from('loans').upsert(state.loans.map(loanToDb));
+  { const _L=AUTHED?state.loans:state.loans.filter(l=>l.borrowerKind&&l.borrowerKind!=='person'&&!l.personRef&&!(l.who&&l.who!=='')); if(_L.length) await sb.from('loans').upsert(_L.map(loanToDb)); }
 }catch(e){} }
 function subscribeAll(){ sb.channel('inv').on('postgres_changes',{event:'*',schema:'public'},p=>applyRemote(p)).subscribe(); }
 function applyRemote(p){ const t=p.table,ev=p.eventType,row=p.new,old=p.old;

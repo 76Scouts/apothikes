@@ -8,7 +8,7 @@
    · ΔΕΔΟΜΕΝΑ (Supabase) και ο έλεγχος νέας έκδοσης: ΠΟΤΕ από τη μνήμη.
    Διακόπτης ανάγκης: αν χρειαστεί να σβήσει, αντικατέστησε αυτό το αρχείο με ένα που κάνει
    self.registration.unregister() — ή άλλαξε το VERSION για να καθαρίσει όλη η παλιά μνήμη. */
-const VERSION = 'apothikes-v1';
+const VERSION = 'apothikes-v2';
 const PAGE = '76-katagrafi-ylikou.html';
 const PINNED = /^https:\/\/cdn\.jsdelivr\.net\/npm\/(@supabase\/supabase-js@\d+\.\d+\.\d+|xlsx@\d+\.\d+\.\d+|qrcode@\d+\.\d+\.\d+|dijkstrajs@\d+\.\d+\.\d+)\//;
 
@@ -42,7 +42,10 @@ self.addEventListener('fetch', e => {
     const isMain = url.pathname.endsWith('/' + PAGE) || url.pathname.endsWith('/');
     const isNav = req.mode === 'navigate' || isMain;
     const key = isMain ? './' + PAGE : req;
-    e.respondWith(Promise.race([fetch(req), timeout(isNav ? 4000 : 8000)]).then(res => {
+    // η κύρια σελίδα: ΠΑΝΤΑ ρωτάμε τον διακομιστή (cache:'no-cache' = «έχεις νεότερη;», φθηνό 304 αν όχι).
+    // Χωρίς αυτό ο browser κρατά την παλιά σελίδα έως 10′ (το GitHub στέλνει max-age=600) — το πρόβλημα του Αυγούστου.
+    const net = isMain ? fetch(url.href, { cache: 'no-cache', credentials: 'same-origin' }) : fetch(req);
+    e.respondWith(Promise.race([net, timeout(isNav ? 4000 : 8000)]).then(res => {
       if (res && res.ok && res.status === 200) { const cp = res.clone(); caches.open(VERSION).then(c => c.put(key, cp)); }
       return res;
     }).catch(() => caches.match(key).then(hit => hit || (isNav ? caches.match('./' + PAGE) : null)).then(hit => hit || new Response(

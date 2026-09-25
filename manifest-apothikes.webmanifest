@@ -1,0 +1,45 @@
+{
+  "name": "76 — Καταγραφή Υλικού",
+  "short_name": "76 Υλικό",
+  "description": "76ο Σύστημα Προσκόπων Στροβόλου — καταγραφή και απογραφή υλικού αποθηκών",
+  "lang": "el",
+  "dir": "ltr",
+  "start_url": "./76-katagrafi-ylikou.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#eef3f8",
+  "theme_color": "#1D61AC",
+  "icons": [
+    {
+      "src": "icon-apothikes-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-apothikes-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-apothikes-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Οδηγός απογραφής",
+      "short_name": "Απογραφή",
+      "url": "./76-katagrafi-ylikou.html#guide"
+    },
+    {
+      "name": "Νέο υλικό",
+      "short_name": "Νέο",
+      "url": "./76-katagrafi-ylikou.html#new"
+    }
+  ]
+}

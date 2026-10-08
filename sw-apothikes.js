@@ -8,7 +8,8 @@
    · ΔΕΔΟΜΕΝΑ (Supabase) και ο έλεγχος νέας έκδοσης: ΠΟΤΕ από τη μνήμη.
    Διακόπτης ανάγκης: αν χρειαστεί να σβήσει, αντικατέστησε αυτό το αρχείο με ένα που κάνει
    self.registration.unregister() — ή άλλαξε το VERSION για να καθαρίσει όλη η παλιά μνήμη. */
-const VERSION = 'apothikes-v2';
+const VERSION = 'apothikes-v3';
+const PHOTOS = /^https:\/\/stidsdyineifhemkodup\.supabase\.co\/storage\/v1\/object\/public\/photos\/items\/[A-Za-z0-9_-]{1,80}\.(jpg|webp)$/;
 const PAGE = '76-katagrafi-ylikou.html';
 const PINNED = /^https:\/\/cdn\.jsdelivr\.net\/npm\/(@supabase\/supabase-js@\d+\.\d+\.\d+|xlsx@\d+\.\d+\.\d+|qrcode@\d+\.\d+\.\d+|dijkstrajs@\d+\.\d+\.\d+)\//;
 
@@ -25,6 +26,14 @@ function timeout(ms) { return new Promise((_, rej) => setTimeout(() => rej(new E
 self.addEventListener('fetch', e => {
   const req = e.request, url = new URL(req.url);
   if (req.method !== 'GET') return;                                   // εγγραφές: ποτέ από εδώ
+  // φωτογραφίες υλικών: κάθε αρχείο έχει μοναδικό όνομα και δεν αλλάζει ποτέ → μνήμη πρώτα (φαίνονται και χωρίς σήμα)
+  if (PHOTOS.test(req.url)) {
+    e.respondWith(caches.match(req).then(hit => hit || fetch(req).then(res => {
+      if (res && res.ok) { const cp = res.clone(); caches.open(VERSION).then(c => c.put(req, cp)); }
+      return res;
+    })));
+    return;
+  }
   if (url.hostname.endsWith('.supabase.co')) return;                  // δεδομένα: πάντα ζωντανά
   if (url.searchParams.has('build-check')) return;                    // έλεγχος νέας έκδοσης: πάντα ζωντανός
 
